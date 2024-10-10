@@ -7,7 +7,7 @@ T = TypeVar('T')  # TypeVar for the default value type
 
 
 def safely_get_value(
-    dct: Mapping[Any, Any], key: Any, default: Union[T, None] = None
+    dct: Mapping, key: Any, default: Union[T, None] = None
 ) -> Union[Any, T]:
     """Returns the value from the dictionary for the given key,
     or the default."""
