@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Async Generator function"""
 import asyncio
 import random
 from typing import AsyncGenerator
