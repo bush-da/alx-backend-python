@@ -126,22 +126,18 @@ class TestMemoize(unittest.TestCase):
             The original method is only called once.
         """
         class TestClass:
-            """A simple test class to demonstrate memoization."""
             def a_method(self):
-                """Returns a constant value."""
                 return 42
 
             @memoize
             def a_property(self):
-                """Memoized property that returns the result of `a_method`."""
                 return self.a_method()
-
         with patch.object(
                 TestClass,
                 "a_method",
-                return_value=42,
+                return_value=lambda: 42,
                 ) as memo_fxn:
             test_class = TestClass()
-            self.assertEqual(test_class.a_property, 42)
-            self.assertEqual(test_class.a_property, 42)
+            self.assertEqual(test_class.a_property(), 42)
+            self.assertEqual(test_class.a_property(), 42)
             memo_fxn.assert_called_once()
