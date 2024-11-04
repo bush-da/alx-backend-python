@@ -28,7 +28,8 @@ from fixtures import TEST_PAYLOAD
 class TestGithubOrgClient(unittest.TestCase):
     """Tests for the `GithubOrgClient` class.
 
-    This class provides unit tests for the methods in the `GithubOrgClient` class,
+    This class provides unit tests for the methods in the
+    `GithubOrgClient` class,
     verifying the behavior of:
     - Fetching organization details using `org`.
     - Retrieving public repository URLs with `_public_repos_url`.
@@ -63,7 +64,8 @@ class TestGithubOrgClient(unittest.TestCase):
         """Tests the `_public_repos_url` property.
 
         Asserts:
-            The `_public_repos_url` returns the correct repos URL for the organization.
+            The `_public_repos_url` returns the correct repos URL
+        for the organization.
         """
         with patch(
                 "client.GithubOrgClient.org",
@@ -82,7 +84,8 @@ class TestGithubOrgClient(unittest.TestCase):
         """Tests the `public_repos` method.
 
         Parameters:
-            mock_get_json (MagicMock): The mock object for the `get_json` function.
+            mock_get_json (MagicMock): The mock object for the
+        `get_json` function.
 
         Asserts:
             The `public_repos` method returns a list of repository names.
@@ -151,7 +154,8 @@ class TestGithubOrgClient(unittest.TestCase):
         Parameters:
             repo (Dict): The repository metadata.
             key (str): The license key to check for.
-            expected (bool): Expected result indicating if the license key matches.
+            expected (bool): Expected result indicating if
+        the license key matches.
 
         Asserts:
             The output from `has_license` matches the expected boolean result.
@@ -202,7 +206,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Tests the `public_repos` method.
 
         Asserts:
-            The `public_repos` method returns the expected list of repository names.
+            The `public_repos` method returns the expected list
+        of repository names.
         """
         self.assertEqual(
             GithubOrgClient("google").public_repos(),
@@ -213,7 +218,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Tests the `public_repos` method with a specific license filter.
 
         Asserts:
-            The `public_repos` method returns repositories matching the specified license.
+            The `public_repos` method returns repositories matching
+        the specified license.
         """
         self.assertEqual(
             GithubOrgClient("google").public_repos(license="apache-2.0"),
