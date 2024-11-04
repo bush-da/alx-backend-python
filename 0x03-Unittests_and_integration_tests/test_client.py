@@ -1,13 +1,6 @@
 #!/usr/bin/env python3
-"""A module for testing the GithubOrgClient class in the client module.
-
-This module contains unit and integration tests for the GithubOrgClient class,
-including tests for:
-- Fetching organization details.
-- Retrieving public repositories.
-- Filtering repositories by license.
+"""A module for testing the client module.
 """
-
 import unittest
 from typing import Dict
 from unittest.mock import (
@@ -26,33 +19,16 @@ from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Tests for the `GithubOrgClient` class.
-
-    This class provides unit tests for the methods in the
-    `GithubOrgClient` class,
-    verifying the behavior of:
-    - Fetching organization details using `org`.
-    - Retrieving public repository URLs with `_public_repos_url`.
-    - Listing public repositories using `public_repos`.
-    - Checking repository license with `has_license`.
-    """
-
+    """Tests the `GithubOrgClient` class."""
     @parameterized.expand([
         ("google", {'login': "google"}),
         ("abc", {'login': "abc"}),
     ])
-    @patch("client.get_json")
+    @patch(
+        "client.get_json",
+    )
     def test_org(self, org: str, resp: Dict, mocked_fxn: MagicMock) -> None:
-        """Tests the `org` method.
-
-        Parameters:
-            org (str): The organization name.
-            resp (Dict): The mock response data.
-
-        Asserts:
-            The organization details returned match the expected response.
-            The `get_json` function is called with the correct URL.
-        """
+        """Tests the `org` method."""
         mocked_fxn.return_value = MagicMock(return_value=resp)
         gh_org_client = GithubOrgClient(org)
         self.assertEqual(gh_org_client.org(), resp)
@@ -61,12 +37,7 @@ class TestGithubOrgClient(unittest.TestCase):
         )
 
     def test_public_repos_url(self) -> None:
-        """Tests the `_public_repos_url` property.
-
-        Asserts:
-            The `_public_repos_url` returns the correct repos URL
-        for the organization.
-        """
+        """Tests the `_public_repos_url` property."""
         with patch(
                 "client.GithubOrgClient.org",
                 new_callable=PropertyMock,
@@ -81,16 +52,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json: MagicMock) -> None:
-        """Tests the `public_repos` method.
-
-        Parameters:
-            mock_get_json (MagicMock): The mock object for the
-        `get_json` function.
-
-        Asserts:
-            The `public_repos` method returns a list of repository names.
-            The `get_json` function is called with the expected URL.
-        """
+        """Tests the `public_repos` method."""
         test_payload = {
             'repos_url': "https://api.github.com/users/google/repos",
             'repos': [
@@ -149,20 +111,10 @@ class TestGithubOrgClient(unittest.TestCase):
         ({'license': {'key': "bsl-1.0"}}, "bsd-3-clause", False),
     ])
     def test_has_license(self, repo: Dict, key: str, expected: bool) -> None:
-        """Tests the `has_license` method.
-
-        Parameters:
-            repo (Dict): The repository metadata.
-            key (str): The license key to check for.
-            expected (bool): Expected result indicating if
-        the license key matches.
-
-        Asserts:
-            The output from `has_license` matches the expected boolean result.
-        """
+        """Tests the `has_license` method."""
         gh_org_client = GithubOrgClient("google")
-        client_has_license = gh_org_client.has_license(repo, key)
-        self.assertEqual(client_has_license, expected)
+        client_has_licence = gh_org_client.has_license(repo, key)
+        self.assertEqual(client_has_licence, expected)
 
 
 @parameterized_class([
@@ -174,21 +126,10 @@ class TestGithubOrgClient(unittest.TestCase):
     },
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration tests for the `GithubOrgClient` class.
-
-    This class provides integration tests for `GithubOrgClient` methods,
-    specifically testing:
-    - Fetching all public repositories for an organization.
-    - Filtering repositories by license.
-    """
-
+    """Performs integration tests for the `GithubOrgClient` class."""
     @classmethod
     def setUpClass(cls) -> None:
-        """Sets up class fixtures before running tests.
-
-        Patches the `requests.get` method to provide predefined payloads
-        for organization and repository data based on the URL.
-        """
+        """Sets up class fixtures before running tests."""
         route_payload = {
             'https://api.github.com/orgs/google': cls.org_payload,
             'https://api.github.com/orgs/google/repos': cls.repos_payload,
@@ -203,24 +144,14 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher.start()
 
     def test_public_repos(self) -> None:
-        """Tests the `public_repos` method.
-
-        Asserts:
-            The `public_repos` method returns the expected list
-        of repository names.
-        """
+        """Tests the `public_repos` method."""
         self.assertEqual(
             GithubOrgClient("google").public_repos(),
             self.expected_repos,
         )
 
     def test_public_repos_with_license(self) -> None:
-        """Tests the `public_repos` method with a specific license filter.
-
-        Asserts:
-            The `public_repos` method returns repositories matching
-        the specified license.
-        """
+        """Tests the `public_repos` method with a license."""
         self.assertEqual(
             GithubOrgClient("google").public_repos(license="apache-2.0"),
             self.apache2_repos,
@@ -228,8 +159,5 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        """Removes the class fixtures after running all tests.
-
-        Stops the `requests.get` patcher.
-        """
+        """Removes the class fixtures after running all tests."""
         cls.get_patcher.stop()
